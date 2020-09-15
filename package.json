@@ -1,7 +1,7 @@
 {
-  "name": "@digital-magic/ts-template",
+  "name": "@digital-magic/fp-ts-extensions",
   "version": "1.0.1",
-  "description": "Template for Typescript based projects",
+  "description": "Extensions for fp-ts library",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "sideEffects": false,
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/digital-magic-io/ts-template.git"
+    "url": "git+https://github.com/digital-magic-io/fp-ts-extensions.git"
   },
   "files": [
     "lib/",
@@ -30,16 +30,16 @@
   "author": "Jevgeni Goloborodko <jevgeni@digital-magic.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/digital-magic-io/ts-template/issues"
+    "url": "https://github.com/digital-magic-io/fp-ts-extensions/issues"
   },
-  "homepage": "https://github.com/digital-magic-io/ts-template#readme",
+  "homepage": "https://github.com/digital-magic-io/fp-ts-extensions#readme",
   "keywords": [
     "typescript",
-    "template"
+    "fp-ts"
   ],
   "tags": [
     "typescript",
-    "template"
+    "fp-ts"
   ],
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.11.0",
@@ -58,7 +58,10 @@
     "tslint-immutable": "^6.0.1",
     "typescript": "^4.0.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@digital-magic/ts-common-utils": "^1.0.8",
+    "fp-ts": "^2.8.2"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"

@@ -1,4 +1,5 @@
-export function hello() {
-  // tslint:disable-next-line:no-console
-  console.log('Hello')
-}
+import * as Array from './Array'
+import * as Semigroup from './Semigroup'
+import * as utils from './utils'
+
+export { Array, Semigroup, utils }
