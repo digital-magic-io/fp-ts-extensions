@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/lib/Option'
 import { fold } from 'fp-ts/Semigroup'
 import { getBrandedNullableSemigroup, getNullableStringSemigroup } from './Semigroup'
-import { isEmpty, NullableString, NullableType, OptionalType } from '@digital-magic/ts-common-utils/lib/type'
+import { isEmpty, NullableString, NullableType } from '@digital-magic/ts-common-utils/lib/type'
 import { pipe } from 'fp-ts/pipeable'
 
 /**
@@ -19,7 +19,11 @@ export const foldNullableString = (delimiter: string) => fold(getNullableStringS
 export const foldBrandedNullable = <T>(createBrand: (value: NullableString) => T, delimiter: string) =>
   fold(getBrandedNullableSemigroup(createBrand, delimiter))
 
-export const mapNotNullable: <A, B>(f: (a: A) => B) => (v: OptionalType<A>) => OptionalType<B> = (f) => (v) =>
+/**
+ * Maps NullableString if it has value or returns 'undefined'
+ * @param f map function
+ */
+export const mapNotNullable: <A, B>(f: (a: A) => B) => (v: NullableType<A>) => NullableType<B> = (f) => (v) =>
   pipe(O.fromNullable(v), O.map(f), O.toUndefined)
 
 // TODO: Find better algebra
