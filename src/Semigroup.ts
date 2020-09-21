@@ -29,11 +29,11 @@ export function getDeepObjectSemigroup(): Semigroup<any> {
   return {
     concat: (x, y) => {
       if (Array.isArray(x) && Array.isArray(y)) {
-        return x.concat(y)
+        return x.concat(y).sort()
       } else if (Array.isArray(x) || Array.isArray(y)) {
-        return Array.isArray(x) ? x.concat(y) : y.concat(x)
+        return (Array.isArray(x) ? x.concat(y) : y.concat(x)).sort()
       } else if (isNonArrayObject(x) && isNonArrayObject(y)) {
-        const keys = new Set(Object.keys(x).concat(Object.keys(y)))
+        const keys = [...new Set(Object.keys(x).concat(Object.keys(y)))].sort()
         const result: Record<string, any> = {}
         keys.forEach((key) => {
           if (x[key] === undefined) {
@@ -42,6 +42,9 @@ export function getDeepObjectSemigroup(): Semigroup<any> {
             result[key] = x[key]
           } else {
             result[key] = getDeepObjectSemigroup().concat(x[key], y[key])
+          }
+          if (Array.isArray(result[key])) {
+            result[key].sort()
           }
         })
         return result
