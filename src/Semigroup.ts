@@ -31,55 +31,22 @@ export function getBrandedNullableSemigroup<T>(
   }
 }
 
-const arrConcat = A.getMonoid<any>().concat
-
-const arrSmartConcat = <T>(x: ReadonlyArray<T> | T, y: ReadonlyArray<T> | T) =>
-  arrConcat(Array.isArray(x) ? x : [x], Array.isArray(y) ? y : [y])
-
-const buildRecordTuple = (key: string, x: any, y: any) => (s: Semigroup<any>): ReadOnlyRecordTuple<string, any> => [
-  key,
-  s.concat(x, y)
-]
-
-const mergeField = (x: Record<string, any>, y: Record<string, any>) => (
-  key: string
-): ReadOnlyRecordTuple<string, any> => {
-  const brt = buildRecordTuple(key, x[key], y[key])
-  switch ([isEmpty(x[key]), isEmpty(y[key])]) {
-    case [true, false]:
-      return brt(getFirstSemigroup<any>())
-    case [false, true]:
-      return brt(getLastSemigroup<any>())
-    default:
-      return brt(getDeepObjectSemigroup())
-  }
-}
+const asArray = (v: any) => (Array.isArray(v) ? v : isEmpty(v) ? [] : [v])
 
 /**
  * Recursively joins objects concatenating arrays if found.
  */
 export function getDeepObjectSemigroup(): Semigroup<any> {
   return {
-    concat: (x, y) => {
-      if (Array.isArray(x) && Array.isArray(y)) {
-        // tslint:disable-next-line:no-console
-        console.log(x, y)
-        const res = arrConcat(x, y)
-        // tslint:disable-next-line:no-console
-        console.log(res)
-        return res
-      } else if (Array.isArray(x) || Array.isArray(y)) {
-        return Array.isArray(x) ? arrSmartConcat(x, y) : arrSmartConcat(y, x)
-      } else if (isNonArrayObject(x) && isNonArrayObject(y)) {
-        return pipe(
-          A.uniq(eqString)(arrConcat(Object.keys(x), Object.keys(y))),
-          // A.union(eqString)(Object.keys(x), Object.keys(y)),
-          A.map(mergeField(x, y)),
-          toReadonlyRecord
-        )
-      } else {
-        return getLastSemigroup<any>().concat(x, y)
-      }
-    }
+    concat: (x, y) =>
+      Array.isArray(x) || Array.isArray(y)
+        ? A.getMonoid<any>().concat(asArray(x), asArray(y))
+        : isNonArrayObject(x) && isNonArrayObject(y)
+        ? pipe(
+            A.union(eqString)(Object.keys(x), Object.keys(y)),
+            A.map((k) => [k, getDeepObjectSemigroup().concat(x[k], y[k])] as ReadOnlyRecordTuple<string, any>),
+            toReadonlyRecord
+          )
+        : (isEmpty(y) ? getFirstSemigroup<any>() : getLastSemigroup<any>()).concat(x, y)
   }
 }

@@ -18,6 +18,11 @@ describe('semigroup', () => {
     assert.strictEqual(nss.concat(null, null), '')
     assert.strictEqual(nss.concat(undefined, undefined), '')
   })
+  it('getNullableStringSemigroup associativity law', () => {
+    const concat = getNullableStringSemigroup('/').concat
+    assert.strictEqual(concat(concat('my', 'path'), 'ends'), concat('my', concat('path', 'ends')))
+    assert.strictEqual(concat(concat('my', null), 'ends'), concat('my', concat(null, 'ends')))
+  })
   it('getBrandedNullableSemigroup', () => {
     const createBrand = (value: NullableString): string | null | undefined => String(value)
     const bns = getBrandedNullableSemigroup(createBrand, '/')
@@ -29,6 +34,11 @@ describe('semigroup', () => {
     assert.strictEqual(bns.concat(null, null), '')
     assert.strictEqual(bns.concat(undefined, undefined), '')
   })
+  it('getBrandedNullableSemigroup associativity law', () => {
+    const createBrand = (value: NullableString): string | null | undefined => String(value)
+    const concat = getBrandedNullableSemigroup(createBrand, '/').concat
+    assert.strictEqual(concat(concat('my', undefined), 'ends'), concat('my', concat(undefined, 'ends')))
+  })
   it('getDeepObjectSemigroup must obey associative law with arrays', () => {
     const obj1: ReadonlyArray<any> = [1, 2, 3]
     const obj2: ReadonlyArray<any> = [4, 9]
@@ -38,10 +48,6 @@ describe('semigroup', () => {
       JSON.stringify(concat(concat(obj1, obj2), obj3)),
       JSON.stringify(concat(obj1, concat(obj2, obj3)))
     )
-    // tslint:disable-next-line:no-console
-    console.log(concat(concat(obj1, obj2), obj3))
-    // tslint:disable-next-line:no-console
-    console.log(concat(obj1, concat(obj2, obj3)))
   })
   it('getDeepObjectSemigroup must obey associative law with objects of array', () => {
     const obj1 = {
@@ -125,34 +131,6 @@ describe('semigroup', () => {
       JSON.stringify(concat(concat(obj1, obj2), obj3)),
       JSON.stringify(concat(obj1, concat(obj2, obj3)))
     )
-    const expected = {
-      a: [
-        {
-          y: 6,
-          x: 5
-        },
-        {
-          y: 3,
-          x: 4
-        },
-        {
-          x: 1,
-          y: 2
-        }
-      ],
-      x: {
-        a: 1,
-        b: 2,
-        c: 3,
-        d: [1, 2, 3, 4, 5],
-        e: 4,
-        f: 5,
-        g: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-      },
-      y: 1,
-      z: 1
-    }
-    assert.strictEqual(JSON.stringify(concat(concat(obj1, obj2), obj3)), JSON.stringify(expected))
   })
   it('getDeepObjectSemigroup merges data correctly', () => {
     const obj1 = {
@@ -208,7 +186,10 @@ describe('semigroup', () => {
       ]
     }
     const obj3 = {
+      name: 'Sanja',
+      groups: [1, 2, 3],
       age: 15,
+      notes: 'Has a dog',
       children: [
         {
           name: 'Ivan'
@@ -221,24 +202,21 @@ describe('semigroup', () => {
         }
       ],
       education: {
+        type: 'master',
         finished: 2000,
-        requiredAP: 180,
-        type: 'master'
+        requiredAP: 180
       },
-      extraInfo: 'Some info',
-      groups: [1, 2, 3],
       hobby: [
-        {
-          type: 'gaming',
-          title: 'Strategies'
-        },
         {
           type: 'sports',
           title: 'Football'
+        },
+        {
+          type: 'gaming',
+          title: 'Strategies'
         }
       ],
-      name: 'Sanja',
-      notes: 'Has a dog',
+      extraInfo: 'Some info',
       pets: [
         {
           type: 'dog'
