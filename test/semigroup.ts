@@ -27,6 +27,7 @@ describe('semigroup', () => {
     const createBrand = (value: NullableString): string | null | undefined => String(value)
     const bns = getBrandedNullableSemigroup(createBrand, '/')
     assert.strictEqual(bns.concat('my', 'path'), 'my/path')
+    assert.strictEqual(bns.concat('my', 'path'), 'my/path')
     assert.strictEqual(bns.concat(null, 'path'), 'path')
     assert.strictEqual(bns.concat('my', null), 'my')
     assert.strictEqual(bns.concat(undefined, 'path'), 'path')
@@ -58,6 +59,23 @@ describe('semigroup', () => {
     }
     const obj3 = {
       x: [5, 6, 7]
+    }
+    const concat = getDeepObjectSemigroup().concat
+    // associative law: (obj1 <> obj2) <> obj3 === obj1 <> (obj2 <> obj3)
+    assert.strictEqual(
+      JSON.stringify(concat(concat(obj1, obj2), obj3)),
+      JSON.stringify(concat(obj1, concat(obj2, obj3)))
+    )
+  })
+  it('getDeepObjectSemigroup must obey associative law with objects of array2', () => {
+    const obj1 = {
+      x: [1]
+    }
+    const obj2 = {
+      x: 1
+    }
+    const obj3 = {
+      x: 2
     }
     const concat = getDeepObjectSemigroup().concat
     // associative law: (obj1 <> obj2) <> obj3 === obj1 <> (obj2 <> obj3)
@@ -150,10 +168,12 @@ describe('semigroup', () => {
         type: 'higher',
         finished: 2000
       },
-      hobby: {
-        type: 'sports',
-        title: 'Football'
-      }
+      hobby: [
+        {
+          type: 'sports',
+          title: 'Football'
+        }
+      ]
     }
     const obj2 = {
       name: 'Sanja',

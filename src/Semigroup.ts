@@ -1,9 +1,15 @@
 import * as A from 'fp-ts/lib/ReadonlyArray'
-import { getFirstSemigroup, getLastSemigroup, Semigroup } from 'fp-ts/Semigroup'
+import { Semigroup } from 'fp-ts/Semigroup'
 import { ReadOnlyRecordTuple, toReadonlyRecord } from './ReadOnlyRecord'
 import { eqString } from 'fp-ts/Eq'
 import { pipe } from 'fp-ts/pipeable'
-import { isEmpty, isNonArrayObject, isNotEmptyString, NullableString } from '@digital-magic/ts-common-utils/lib/type'
+import {
+  hasValue,
+  isEmpty,
+  isNonArrayObject,
+  isNotEmptyString,
+  NullableString
+} from '@digital-magic/ts-common-utils/lib/type'
 
 export type NullableStringSemigroup = Semigroup<NullableString>
 
@@ -31,7 +37,14 @@ export function getBrandedNullableSemigroup<T>(
   }
 }
 
-const asArray = (v: any) => (Array.isArray(v) ? v : isEmpty(v) ? [] : [v])
+const mergeObjects = (x: any, y: any): any =>
+  pipe(
+    A.union(eqString)(Object.keys(x), Object.keys(y)),
+    A.map((k) => [k, getDeepObjectSemigroup().concat(x[k], y[k])] as ReadOnlyRecordTuple<string, any>),
+    toReadonlyRecord
+  )
+
+const mergeOther = (x: any, y: any): any => (isEmpty(y) || (hasValue(y) && Array.isArray(x)) ? x : y)
 
 /**
  * Recursively joins objects concatenating arrays if found.
@@ -39,14 +52,10 @@ const asArray = (v: any) => (Array.isArray(v) ? v : isEmpty(v) ? [] : [v])
 export function getDeepObjectSemigroup(): Semigroup<any> {
   return {
     concat: (x, y) =>
-      Array.isArray(x) || Array.isArray(y)
-        ? A.getMonoid<any>().concat(asArray(x), asArray(y))
+      Array.isArray(x) && Array.isArray(y)
+        ? A.getMonoid<any>().concat(x, y)
         : isNonArrayObject(x) && isNonArrayObject(y)
-        ? pipe(
-            A.union(eqString)(Object.keys(x), Object.keys(y)),
-            A.map((k) => [k, getDeepObjectSemigroup().concat(x[k], y[k])] as ReadOnlyRecordTuple<string, any>),
-            toReadonlyRecord
-          )
-        : (isEmpty(y) ? getFirstSemigroup<any>() : getLastSemigroup<any>()).concat(x, y)
+        ? mergeObjects(x, y)
+        : mergeOther(x, y)
   }
 }
