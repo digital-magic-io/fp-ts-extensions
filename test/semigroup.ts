@@ -3,7 +3,9 @@ import {
   getBrandedNullableSemigroup,
   getDeepObjectSemigroup,
   getNullableStringSemigroup,
-  NullableStringSemigroup
+  getOptionalStringSemigroup,
+  NullableStringSemigroup,
+  OptionalStringSemigroup
 } from '../src/Semigroup'
 import { NullableString } from '@digital-magic/ts-common-utils/lib/type'
 
@@ -22,6 +24,18 @@ describe('semigroup', () => {
     const concat = getNullableStringSemigroup('/').concat
     assert.strictEqual(concat(concat('my', 'path'), 'ends'), concat('my', concat('path', 'ends')))
     assert.strictEqual(concat(concat('my', null), 'ends'), concat('my', concat(null, 'ends')))
+  })
+  it('getOptionalStringSemigroup', () => {
+    const nss: OptionalStringSemigroup = getOptionalStringSemigroup('/')
+    assert.strictEqual(nss.concat('my', 'path'), 'my/path')
+    assert.strictEqual(nss.concat(undefined, 'path'), 'path')
+    assert.strictEqual(nss.concat('my', undefined), 'my')
+    assert.strictEqual(nss.concat(undefined, undefined), '')
+  })
+  it('getOptionalStringSemigroup associativity law', () => {
+    const concat = getNullableStringSemigroup('/').concat
+    assert.strictEqual(concat(concat('my', 'path'), 'ends'), concat('my', concat('path', 'ends')))
+    assert.strictEqual(concat(concat('my', undefined), 'ends'), concat('my', concat(undefined, 'ends')))
   })
   it('getBrandedNullableSemigroup', () => {
     const createBrand = (value: NullableString): string | null | undefined => String(value)

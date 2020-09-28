@@ -8,10 +8,12 @@ import {
   isEmpty,
   isNonArrayObject,
   isNotEmptyString,
-  NullableString
+  NullableString,
+  OptionalString
 } from '@digital-magic/ts-common-utils/lib/type'
 
 export type NullableStringSemigroup = Semigroup<NullableString>
+export type OptionalStringSemigroup = Semigroup<OptionalString>
 
 /**
  * Builds Semigroup that joins nullable strings with delimiter skipping elements that doesn't have value
@@ -20,6 +22,12 @@ export type NullableStringSemigroup = Semigroup<NullableString>
 export function getNullableStringSemigroup(delimiter: string): NullableStringSemigroup {
   return {
     concat: (x, y) => [x, y].filter(isNotEmptyString).join(delimiter)
+  }
+}
+
+export function getOptionalStringSemigroup(delimeter: string): OptionalStringSemigroup {
+  return {
+    concat: (x, y) => [x, y].filter(isNotEmptyString).join(delimeter)
   }
 }
 
