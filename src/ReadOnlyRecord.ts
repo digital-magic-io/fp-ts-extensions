@@ -1,6 +1,6 @@
 import * as R from 'fp-ts/lib/ReadonlyRecord'
 import * as A from 'fp-ts/lib/ReadonlyArray'
-import { getLastSemigroup } from 'fp-ts/Semigroup'
+import { getLastSemigroup } from 'fp-ts/lib/Semigroup'
 
 export type ReadOnlyRecordTuple<K extends string, V> = readonly [K, V]
 

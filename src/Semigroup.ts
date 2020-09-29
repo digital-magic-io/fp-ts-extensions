@@ -1,8 +1,8 @@
 import * as A from 'fp-ts/lib/ReadonlyArray'
-import { Semigroup } from 'fp-ts/Semigroup'
+import { Semigroup } from 'fp-ts/lib/Semigroup'
 import { ReadOnlyRecordTuple, toReadonlyRecord } from './ReadOnlyRecord'
-import { eqString } from 'fp-ts/Eq'
-import { pipe } from 'fp-ts/pipeable'
+import { eqString } from 'fp-ts/lib/Eq'
+import { pipe } from 'fp-ts/lib/pipeable'
 import {
   hasValue,
   isEmpty,

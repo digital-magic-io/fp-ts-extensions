@@ -2,7 +2,7 @@ import * as O from 'fp-ts/lib/Option'
 import { fold } from 'fp-ts/Semigroup'
 import { getBrandedNullableSemigroup, getNullableStringSemigroup } from './Semigroup'
 import { isEmpty, NullableString, NullableType } from '@digital-magic/ts-common-utils/lib/type'
-import { pipe } from 'fp-ts/pipeable'
+import { pipe } from 'fp-ts/lib/pipeable'
 
 /**
  * Joins nullable strings
