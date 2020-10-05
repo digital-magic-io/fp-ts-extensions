@@ -52,7 +52,12 @@ const mergeObjects = (x: any, y: any): any =>
     toReadonlyRecord
   )
 
-const mergeOther = (x: any, y: any): any => (isEmpty(y) || (hasValue(y) && Array.isArray(x)) ? x : y)
+const mergeOther = (x: any, y: any): any =>
+  isEmpty(y) ||
+  (isNonArrayObject(y) && Array.isArray(x)) ||
+  (hasValue(y) && typeof y !== 'object' && (Array.isArray(x) || isNonArrayObject(x)))
+    ? x
+    : y
 
 /**
  * Recursively joins objects concatenating arrays if found.

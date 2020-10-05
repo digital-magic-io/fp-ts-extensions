@@ -64,6 +64,27 @@ describe('semigroup', () => {
       JSON.stringify(concat(obj1, concat(obj2, obj3)))
     )
   })
+  it('getDeepObjectSemigroup must obey associative law with mixture of objects and basic types', () => {
+    const obj1 = {
+      x: {
+        a: 1
+      }
+    }
+    const obj2 = {
+      x: 'u'
+    }
+    const obj3 = {
+      x: {
+        b: 1
+      }
+    }
+    const concat = getDeepObjectSemigroup().concat
+    // associative law: (obj1 <> obj2) <> obj3 === obj1 <> (obj2 <> obj3)
+    assert.strictEqual(
+      JSON.stringify(concat(concat(obj1, obj2), obj3)),
+      JSON.stringify(concat(obj1, concat(obj2, obj3)))
+    )
+  })
   it('getDeepObjectSemigroup must obey associative law with objects of array', () => {
     const obj1 = {
       x: [1, 2, 3]
@@ -109,6 +130,8 @@ describe('semigroup', () => {
       x: [{ x: 2 }]
     }
     const concat = getDeepObjectSemigroup().concat
+    // tslint:disable-next-line:no-console
+    console.log(concat(obj1, obj2))
     // associative law: (obj1 <> obj2) <> obj3 === obj1 <> (obj2 <> obj3)
     assert.strictEqual(
       JSON.stringify(concat(concat(obj1, obj2), obj3)),
