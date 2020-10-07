@@ -1,5 +1,5 @@
 import * as A from 'fp-ts/lib/ReadonlyArray'
-import { Semigroup } from 'fp-ts/lib/Semigroup'
+import { fold as foldS, Semigroup } from 'fp-ts/lib/Semigroup'
 import { ReadOnlyRecordTuple, toReadonlyRecord } from './ReadOnlyRecord'
 import { eqString } from 'fp-ts/lib/Eq'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -72,3 +72,24 @@ export function getDeepObjectSemigroup(): Semigroup<any> {
         : mergeOther(x, y)
   }
 }
+
+/**
+ * Fold function with rest params.
+ * @param S Semigroup
+ */
+export const fold = <A>(S: Semigroup<A>) => (startWith: A): ((...as: ReadonlyArray<A>) => A) => (...as) =>
+  foldS(S)(startWith, as)
+
+/**
+ * Joins nullable strings array using separator.
+ * @param delimiter
+ */
+export const foldOptionalString = (delimiter: string) => fold(getOptionalStringSemigroup(delimiter))
+
+/**
+ * Joins nullable branded strings array using separator.
+ * @param createBrand
+ * @param delimiter
+ */
+export const foldNullableBrandedString = <T>(createBrand: (v: NullableString) => T, delimiter: string) =>
+  fold(getBrandedNullableSemigroup(createBrand, delimiter))
