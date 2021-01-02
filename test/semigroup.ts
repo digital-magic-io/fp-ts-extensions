@@ -1,5 +1,7 @@
 import * as assert from 'assert'
 import {
+  foldNullableBrandedString,
+  foldOptionalString,
   getBrandedNullableSemigroup,
   getDeepObjectSemigroup,
   getNullableStringSemigroup,
@@ -284,5 +286,28 @@ describe('semigroup', () => {
     }
     const concat = getDeepObjectSemigroup().concat
     assert.strictEqual(JSON.stringify(concat(obj1, obj2)), JSON.stringify(obj3))
+  })
+  it('foldOptionalString', () => {
+    const folder = foldOptionalString('/')
+    assert.strictEqual(folder('my')('path'), 'my/path')
+    assert.strictEqual(folder('my')(undefined), 'my')
+    assert.strictEqual(folder(undefined)('path'), 'path')
+    assert.strictEqual(folder(undefined)(undefined), '')
+    // TODO: This is strange behaviour - figure out why fold behaves this way
+    assert.strictEqual(folder(undefined)(), undefined)
+  })
+  it('foldBrandedNullable', () => {
+    const createBrand = (value: NullableString): string | null | undefined => String(value)
+    const folder = foldNullableBrandedString(createBrand, '/')
+    assert.strictEqual(folder('my')('path'), 'my/path')
+    assert.strictEqual(folder(null)('path'), 'path')
+    assert.strictEqual(folder('my')(null), 'my')
+    assert.strictEqual(folder(undefined)('path'), 'path')
+    assert.strictEqual(folder('my')(null), 'my')
+    assert.strictEqual(folder(null)(null), '')
+    assert.strictEqual(folder(undefined)(undefined), '')
+    // TODO: This is strange behaviour - figure out why fold behaves this way
+    assert.strictEqual(folder(undefined)(), undefined)
+    assert.strictEqual(folder(null)(), null)
   })
 })
