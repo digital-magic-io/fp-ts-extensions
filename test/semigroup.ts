@@ -130,8 +130,7 @@ describe('semigroup', () => {
       x: [{ x: 2 }]
     }
     const concat = getDeepObjectSemigroup().concat
-    // tslint:disable-next-line:no-console
-    console.log(concat(obj1, obj2))
+
     // associative law: (obj1 <> obj2) <> obj3 === obj1 <> (obj2 <> obj3)
     assert.strictEqual(
       JSON.stringify(concat(concat(obj1, obj2), obj3)),
