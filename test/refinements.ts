@@ -23,9 +23,11 @@ describe('refinements', () => {
     assert.strictEqual(refinement(['word']), true)
     assert.strictEqual(refinement(['']), true)
     assert.strictEqual(refinement(['word', 'another']), true)
+    assert.strictEqual(refinement([undefined]), true)
     assert.strictEqual(refinement(['word', 'word']), false)
     assert.strictEqual(refinement(['word', 'another', 'word']), false)
     assert.strictEqual(refinement([]), false)
+    assert.strictEqual(refinement(undefined), false)
   })
   it('nonEmptyOptionalStringRefinement', () => {
     const refinement = nonEmptyOptionalStringRefinement<string>()

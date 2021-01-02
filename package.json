@@ -62,7 +62,7 @@
   },
   "peerDependencies": {
     "@digital-magic/ts-common-utils": ">= 1.0.13",
-    "fp-ts": ">= 2.6.2"
+    "fp-ts": ">= 2.9.3"
   },
   "husky": {
     "hooks": {
