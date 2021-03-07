@@ -40,7 +40,7 @@ describe('semigroup', () => {
     assert.strictEqual(concat(concat('my', undefined), 'ends'), concat('my', concat(undefined, 'ends')))
   })
   it('getBrandedNullableSemigroup', () => {
-    const createBrand = (value: NullableString): string | null | undefined => String(value)
+    const createBrand: (value: NullableString) => NullableString = String
     const bns = getBrandedNullableSemigroup(createBrand, '/')
     assert.strictEqual(bns.concat('my', 'path'), 'my/path')
     assert.strictEqual(bns.concat('my', 'path'), 'my/path')
@@ -52,13 +52,16 @@ describe('semigroup', () => {
     assert.strictEqual(bns.concat(undefined, undefined), '')
   })
   it('getBrandedNullableSemigroup associativity law', () => {
-    const createBrand = (value: NullableString): string | null | undefined => String(value)
+    const createBrand: (value: NullableString) => NullableString = String
     const concat = getBrandedNullableSemigroup(createBrand, '/').concat
     assert.strictEqual(concat(concat('my', undefined), 'ends'), concat('my', concat(undefined, 'ends')))
   })
   it('getDeepObjectSemigroup must obey associative law with arrays', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const obj1: ReadonlyArray<any> = [1, 2, 3]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const obj2: ReadonlyArray<any> = [4, 9]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const obj3: ReadonlyArray<any> = [5, 6, 7]
     const concat = getDeepObjectSemigroup().concat
     assert.strictEqual(
@@ -297,7 +300,7 @@ describe('semigroup', () => {
     assert.strictEqual(folder(undefined)(), undefined)
   })
   it('foldBrandedNullable', () => {
-    const createBrand = (value: NullableString): string | null | undefined => String(value)
+    const createBrand: (value: NullableString) => NullableString = String
     const folder = foldNullableBrandedString(createBrand, '/')
     assert.strictEqual(folder('my')('path'), 'my/path')
     assert.strictEqual(folder(null)('path'), 'path')

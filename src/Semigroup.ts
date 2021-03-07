@@ -45,14 +45,18 @@ export function getBrandedNullableSemigroup<T>(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mergeObjects = (x: any, y: any): any =>
   pipe(
     A.union(eqString)(Object.keys(x), Object.keys(y)),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-explicit-any
     A.map((k) => [k, getDeepObjectSemigroup().concat(x[k], y[k])] as ReadOnlyRecordTuple<string, any>),
     toReadonlyRecord
   )
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mergeOther = (x: any, y: any): any =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   isEmpty(y) ||
   (isNonArrayObject(y) && Array.isArray(x)) ||
   (hasValue(y) && typeof y !== 'object' && (Array.isArray(x) || isNonArrayObject(x)))
@@ -62,11 +66,13 @@ const mergeOther = (x: any, y: any): any =>
 /**
  * Recursively joins objects concatenating arrays if found.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getDeepObjectSemigroup(): Semigroup<any> {
   return {
     concat: (x, y) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       Array.isArray(x) && Array.isArray(y)
-        ? A.getMonoid<any>().concat(x, y)
+        ? A.getMonoid<unknown>().concat(x, y)
         : isNonArrayObject(x) && isNonArrayObject(y)
         ? mergeObjects(x, y)
         : mergeOther(x, y)
@@ -77,6 +83,7 @@ export function getDeepObjectSemigroup(): Semigroup<any> {
  * Fold function with rest params.
  * @param S Semigroup
  */
+// eslint-disable-next-line functional/functional-parameters
 export const fold = <A>(S: Semigroup<A>) => (startWith: A): ((...as: ReadonlyArray<A>) => A) => (...as) =>
   foldS(S)(startWith, as)
 
@@ -84,6 +91,7 @@ export const fold = <A>(S: Semigroup<A>) => (startWith: A): ((...as: ReadonlyArr
  * Joins nullable strings array using separator.
  * @param delimiter
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const foldOptionalString = (delimiter: string) => fold(getOptionalStringSemigroup(delimiter))
 
 /**
@@ -91,5 +99,6 @@ export const foldOptionalString = (delimiter: string) => fold(getOptionalStringS
  * @param createBrand
  * @param delimiter
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const foldNullableBrandedString = <T>(createBrand: (v: NullableString) => T, delimiter: string) =>
   fold(getBrandedNullableSemigroup(createBrand, delimiter))

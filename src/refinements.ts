@@ -1,5 +1,5 @@
 import { Refinement } from 'fp-ts/function'
-import { hasValue, OptionalType } from '@digital-magic/ts-common-utils/lib/type'
+import { hasValue, NullableType, OptionalType } from '@digital-magic/ts-common-utils/lib/type'
 import { isSameOrAfterDay, isSameOrBeforeDay } from '@digital-magic/ts-common-utils/lib/date'
 
 export type UnknownRefinement<T extends undefined> = Refinement<unknown, T>
@@ -8,10 +8,13 @@ export type NumericRefinement<T extends number> = Refinement<number, T>
 export type DateRefinement<T extends Date> = Refinement<Date, T>
 export type ArrayBufferRefinement<T extends ArrayBuffer> = Refinement<unknown, T>
 
-export const hasValueRefinement = <T extends unknown>(): Refinement<unknown | undefined, T> => (v): v is T =>
-  hasValue(v)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const hasValueRefinement = <T = NonNullable<any>>(): Refinement<NullableType<T>, T> => (v): v is T =>
+  // eslint-disable-next-line
+  hasValue(v) as boolean // This cast is unneeded but eslint has a problem to compile it without it
 
-type AnyArray = ReadonlyArray<any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyArray = ReadonlyArray<any> // TODO: Maybe unknown?
 
 const distinctArray = <T>(v: ReadonlyArray<T>): ReadonlyArray<T> => Array.from(new Set(v))
 
