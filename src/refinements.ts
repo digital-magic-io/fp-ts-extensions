@@ -8,9 +8,8 @@ export type NumericRefinement<T extends number> = Refinement<number, T>
 export type DateRefinement<T extends Date> = Refinement<Date, T>
 export type ArrayBufferRefinement<T extends ArrayBuffer> = Refinement<unknown, T>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const hasValueRefinement = <T = NonNullable<any>>(): Refinement<NullableType<T>, T> => (v): v is T =>
-  // eslint-disable-next-line
+export const hasValueRefinement = <T = NonNullable<unknown>>(): Refinement<NullableType<unknown>, T> => (v): v is T =>
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   hasValue(v) as boolean // This cast is unneeded but eslint has a problem to compile it without it
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
